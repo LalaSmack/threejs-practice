@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as dat from 'dat.gui';
 
+import space from './public/space2.jpg';
+
 // Scene, Camera, Renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -11,7 +13,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75,
     window.innerWidth/window.innerHeight,
 0.1,
-1000);
+100);
 
 // OrbitControls
 const orbit = new OrbitControls(camera, renderer.domElement);
@@ -67,6 +69,18 @@ spotLight.castShadow = true;
 const sLightHelper = new THREE.SpotLightHelper(spotLight);
 scene.add(sLightHelper);
 
+// fog 
+//scene.fog = new THREE.Fog(0xffffff, 0,200);
+scene.fog = new THREE.FogExp2(0x7393B3,0.01 );
+
+// background
+const loader = new THREE.TextureLoader();
+//scene.background = loader.load(space);
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const spaceTexture = cubeTextureLoader.load([
+    space, space, space, space, space, space
+]);
+scene.background = spaceTexture;
 // dat gui options
 const gui = new dat.GUI();
 const options = {
@@ -106,7 +120,7 @@ function animate(time) {
     spotLight.penumbra = options.penumbra;
     spotLight.intensity = options.intensity;
     sLightHelper.update();
-    
+
     renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
