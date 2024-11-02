@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as dat from 'dat.gui';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 const scene = new THREE.Scene();
-
 const camera = new THREE.PerspectiveCamera(75,
     window.innerWidth/window.innerHeight,
 0.1,
@@ -35,6 +35,21 @@ const sphereMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff,
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
 sphere.position.set(10,10,3);
+
+// dat gui options
+const gui = new dat.GUI();
+const options = {
+    sphereColor: 0x0000ff,
+    wireframe: false
+};
+
+gui.addColor(options, 'sphereColor').onChange(function(e) {
+    sphereMaterial.color.set(e);
+});
+
+gui.add(options, 'wireframe').onChange(function(e) {
+    sphereMaterial.wireframe = e;
+});
 
 const gridhelper = new THREE.GridHelper(30);
 scene.add(gridhelper);
