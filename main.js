@@ -40,7 +40,8 @@ sphere.position.set(10,10,3);
 const gui = new dat.GUI();
 const options = {
     sphereColor: 0x0000ff,
-    wireframe: false
+    wireframe: false,
+    speed : 0.01
 };
 
 gui.addColor(options, 'sphereColor').onChange(function(e) {
@@ -51,12 +52,19 @@ gui.add(options, 'wireframe').onChange(function(e) {
     sphereMaterial.wireframe = e;
 });
 
+gui.add(options, 'speed', 0, 0.1);
+
 const gridhelper = new THREE.GridHelper(30);
 scene.add(gridhelper);
 
+
+let step = 0;
 function animate(time) {
     cube.rotation.x = time/1000;
     cube.rotation.y = time/1000;
+
+    step += options.speed;
+    sphere.position.y = Math.abs(Math.sin(step)) * 10;
     renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
