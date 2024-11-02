@@ -38,14 +38,14 @@ const sphereMaterial = new THREE.MeshStandardMaterial({color: 0x0000ff,
     wireframe: false});
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
-sphere.position.set(10,10,3);
+sphere.position.set(0,10,-3);
 sphere.castShadow = true;
 
 // light
 const ambientLight = new THREE.AmbientLight(0x333333);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+/* const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 scene.add(directionalLight);
 directionalLight.position.set(10,30,-20);
 directionalLight.castShadow = true;
@@ -57,13 +57,25 @@ scene.add(dLinghtHelper);
 
 const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
 scene.add(dLightShadowHelper);
+ */
+
+const spotLight = new THREE.SpotLight(0xffffff, 5000);
+scene.add(spotLight);
+spotLight.position.set(10,30,-20);
+spotLight.angle = 0.6;
+spotLight.castShadow = true;
+const sLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(sLightHelper);
 
 // dat gui options
 const gui = new dat.GUI();
 const options = {
     sphereColor: 0x0000ff,
     wireframe: false,
-    speed : 0.01
+    speed : 0.01,
+    angle: 0.6,
+    penumbra: 0,
+    intensity: 5000
 };
 
 gui.addColor(options, 'sphereColor').onChange(function(e) {
@@ -75,7 +87,9 @@ gui.add(options, 'wireframe').onChange(function(e) {
 });
 
 gui.add(options, 'speed', 0, 0.1);
-
+gui.add(options, 'angle', 0, 1)
+gui.add(options, 'penumbra', 0.1, 1);
+gui.add(options, 'intensity', 0, 5000);
 const gridhelper = new THREE.GridHelper(30);
 scene.add(gridhelper);
 
@@ -87,6 +101,12 @@ function animate(time) {
 
     step += options.speed;
     sphere.position.y = Math.abs(Math.sin(step)) * 10;
+
+    spotLight.angle = options.angle;
+    spotLight.penumbra = options.penumbra;
+    spotLight.intensity = options.intensity;
+    sLightHelper.update();
+    
     renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
